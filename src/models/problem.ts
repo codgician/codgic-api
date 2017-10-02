@@ -9,7 +9,7 @@ import { config } from './../init/config';
 import { ProblemPrivilege } from './../init/privilege';
 
 // Get maxium problem id.
-export async function getMaxProblemId() {
+export async function getMaxProblemId(): Promise<number | null> {
 
   const maxProblemInfo = await getRepository(Problem)
     .createQueryBuilder('problem')
@@ -29,7 +29,7 @@ export async function getMaxProblemId() {
 }
 
 // Get problem info
-export async function getProblemInfo(data: number, by: 'id' | 'problemId' = 'problemId') {
+export async function getProblemInfo(data: number, by: 'id' | 'problemId' = 'problemId'): Promise<Problem | undefined> {
 
   // Validate parameters.
   if (!data || (by !== 'id' && by !== 'problemId')) {

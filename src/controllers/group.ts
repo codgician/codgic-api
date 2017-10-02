@@ -37,8 +37,11 @@ export async function getGroupMemberInfo(ctx: Context, next: () => Promise<any>)
   }
 
   // Retrieve group and user.
-  const group = await GroupModel.getGroupInfo(parseInt(ctx.params.groupId, 10), 'id');
-  const user =  await UserModel.getUserInfo(ctx.params.username, 'username');
+
+  const [group, user] = await Promise.all([
+    GroupModel.getGroupInfo(parseInt(ctx.params.groupId, 10), 'id'),
+    UserModel.getUserInfo(ctx.params.username, 'username'),
+  ]);
 
   if (!group) {
     throw createError(500, 'Group does not exist.');
@@ -97,9 +100,16 @@ export async function addToGroup(ctx: Context, next: () => Promise<any>) {
     throw createError(400);
   }
 
-  const group = await GroupModel.getGroupInfo(parseInt(ctx.request.body.groupid, 10), 'id');
+  const [group, user] = await Promise.all([
+    GroupModel.getGroupInfo(parseInt(ctx.request.body.groupid, 10), 'id'),
+    UserModel.getUserInfo(parseInt(ctx.request.body.userid, 10), 'id'),
+  ]);
+
   if (!group) {
     throw createError(400, 'Group does not exist.');
+  }
+  if (!user) {
+    throw createError(400, 'User does not exist.');
   }
 
   // Check privilege.
@@ -107,11 +117,6 @@ export async function addToGroup(ctx: Context, next: () => Promise<any>) {
 
   if (!groupMemberInfo || !checkPrivilege(GroupMemberPrivilege.editUser, groupMemberInfo.privilege)) {
     throw createError(403);
-  }
-
-  const user = await UserModel.getUserInfo(parseInt(ctx.request.body.userid, 10), 'id');
-  if (!user) {
-    throw createError(400, 'User does not exist.');
   }
 
   // Add to group.
@@ -134,12 +139,14 @@ export async function removeFromGroup(ctx: Context, next: () => Promise<any>) {
     throw createError(400);
   }
 
-  const group = await GroupModel.getGroupInfo(parseInt(ctx.params.groupId, 10), 'id');
+  const [group, user] = await Promise.all([
+    GroupModel.getGroupInfo(parseInt(ctx.params.groupId, 10), 'id'),
+    UserModel.getUserInfo(ctx.params.username, 'username'),
+  ]);
+
   if (!group) {
     throw createError(400, 'Group does not exist.');
   }
-
-  const user = await UserModel.getUserInfo(ctx.params.username, 'username');
   if (!user) {
     throw createError(400, 'User does not exist.');
   }
@@ -164,7 +171,7 @@ export async function postGroup(ctx: Context, next: () => Promise<any>) {
   }
 
   // Retrieve owner user.
-  const user =  await UserModel.getUserInfo(parseInt(ctx.state.user.id, 10), 'id');
+  const user = await UserModel.getUserInfo(parseInt(ctx.state.user.id, 10), 'id');
 
   if (!user) {
     throw createError(500, 'User does not exist.');

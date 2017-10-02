@@ -7,9 +7,9 @@ import { getRepository } from 'typeorm';
 import { User } from './../entities/user';
 import { UserCredential } from './../entities/user_credential';
 import { config } from './../init/config';
-import { UserPrivilege } from './../init/privilege';
+import { checkPrivilege, UserPrivilege } from './../init/privilege';
 
-export async function validateUserCredential(data: string, retrievedPassword: string) {
+export async function validateUserCredential(data: string, retrievedPassword: string): Promise<User> {
 
   // Validate parameters.
   if (!data || typeof data !== 'string' || !retrievedPassword || typeof retrievedPassword !== 'string') {
@@ -31,7 +31,7 @@ export async function validateUserCredential(data: string, retrievedPassword: st
     throw createError(403, 'Incorrect username or password.');
   }
 
-  if (!(userCredentialInfo.user.privilege & UserPrivilege.isEnabled)) {
+  if (!checkPrivilege(UserPrivilege.isEnabled, userCredentialInfo.user.privilege)) {
     throw createError(403, 'User is disabled.');
   }
 
@@ -39,13 +39,13 @@ export async function validateUserCredential(data: string, retrievedPassword: st
     throw createError(403, 'Incorrect username or password.');
   }
 
-  const userInfo: User = userCredentialInfo.user;
+  const userInfo = userCredentialInfo.user;
 
   return userInfo;
 
 }
 
-export async function generateToken(user: User) {
+export async function generateToken(user: User): Promise<string> {
 
   // Validate parameters.
   if (!user || typeof user !== 'object') {

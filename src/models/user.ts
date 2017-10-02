@@ -9,15 +9,14 @@ import { UserCredential } from './../entities/user_credential';
 import { config } from './../init/config';
 import { UserPrivilege } from './../init/privilege';
 
-export async function getUserInfo(data: number | string, by: 'id' | 'username' | 'email' = 'id') {
+export async function getUserInfo(data: number | string, by: 'id' | 'username' | 'email' = 'id'): Promise<User | undefined> {
 
   // Validate parameters.
   if (!data || (by !== 'id' && by !== 'username' && by !== 'email')) {
     throw createError(500, 'Invalid parameters.');
   }
 
-  const userRepository = getRepository(User);
-  const userInfo = await userRepository
+  const userInfo = await getRepository(User)
     .findOne({
       where: {
         [by]: data,
@@ -37,7 +36,7 @@ export async function getUserList(
   order: 'ASC' | 'DESC' = 'ASC',
   page: number = 1,
   num: number = config.oj.default.page.user || 20,
-) {
+): Promise<User[]> {
 
   // Validate parameters.
   if (page < 1 || num < 1) {
@@ -45,8 +44,8 @@ export async function getUserList(
   }
 
   const firstResult = (page - 1) * num;
-  const userRepository = getRepository(User);
-  const userList = await userRepository
+
+  const userList = await getRepository(User)
     .createQueryBuilder('user')
     .select([
       'user.id',
@@ -79,7 +78,7 @@ export async function searchUser(
   order: 'ASC' | 'DESC'  = 'ASC',
   page: number = 1,
   num: number = config.oj.default.page.user || 20,
-) {
+): Promise<User[]> {
 
   // Validate parameters.
   if (page < 1 || num < 1 || !keyword) {
@@ -119,7 +118,7 @@ export async function searchUser(
 
 }
 
-export async function postUser(data: any) {
+export async function postUser(data: any): Promise<User> {
 
   // Verify parameters.
   if (!(data.email && data.username)) {

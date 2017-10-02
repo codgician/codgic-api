@@ -9,7 +9,7 @@ import { User } from './../entities/user';
 
 import { config } from './../init/config';
 
-export async function getGroupInfo(data: number | string, by: 'id' | 'name' = 'id') {
+export async function getGroupInfo(data: number | string, by: 'id' | 'name' = 'id'): Promise<Group | undefined> {
 
   // Validate parameters.
   if (!data || (by !== 'id' && by !== 'name')) {
@@ -37,7 +37,7 @@ export async function getGroupInfo(data: number | string, by: 'id' | 'name' = 'i
 
 }
 
-export async function getGroupMemberInfo(user: User, group: Group) {
+export async function getGroupMemberInfo(user: User, group: Group): Promise<GroupMap | undefined> {
 
   // Validate parameters.
   if (!(user && group)) {
@@ -69,7 +69,7 @@ export async function getGroupMemberList(
   direction: 'ASC' | 'DESC' = 'ASC',
   page: number = 1,
   perPage: number = config.oj.default.page.group_member || 20,
-) {
+): Promise<GroupMap[]> {
 
   // Validate parameters.
   if (
@@ -123,7 +123,8 @@ export async function searchGroup(
   order: 'ASC' | 'DESC'  = 'ASC',
   keyword: string,
   page: number = 1,
-  perPage: number = config.oj.default.page.group || 20) {
+  perPage: number = config.oj.default.page.group || 20,
+): Promise<Group[]> {
 
   // Validate parameters.
   if (
@@ -159,7 +160,7 @@ export async function searchGroup(
 
 }
 
-export async function addToGroup(user: User, group: Group, privilege: number) {
+export async function addToGroup(user: User, group: Group, privilege: number): Promise<GroupMap> {
 
   // Validate parameters.
   if (!(user && group) || privilege < 0) {
@@ -187,7 +188,7 @@ export async function addToGroup(user: User, group: Group, privilege: number) {
 
 }
 
-export async function removeFromGroup(user: User, group: Group) {
+export async function removeFromGroup(user: User, group: Group): Promise<null> {
 
   // Validate parameters.
   if (!(user && group)) {
@@ -215,7 +216,7 @@ export async function removeFromGroup(user: User, group: Group) {
 }
 
 // Create or update group.
-export async function postGroup(data: Group, user: User) {
+export async function postGroup(data: Group, user: User): Promise<Group> {
 
   // Validate parameters.
   if (!(data.name && user)) {
