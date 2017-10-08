@@ -25,13 +25,15 @@ Recent changes will be pushed to [Codgic/codgic-api](https://github.com/Codgic/c
 
 # To-do list
 - [x] Hello Koa.
-- [x] Hello Typescript.
+- [x] Hello TypeScript.
 - [x] Hello TypeORM.
 - [x] Hello JWT.
-- [x] Hello Gulp.
-- [x] Hello Mocha, Chai.
+- [x] Hello gulp.
+- [x] Hello mocha, chai.
 - [x] Hello Travis CI.
-- [ ] Hello Socket.io?
+- [ ] Hello socket.io?
+- [ ] Hello winston.
+- [ ] Hello syzoj/judge-v3.
 - [ ] Probably more...
 
 # Known problems (Reminder)
@@ -41,7 +43,7 @@ Recent changes will be pushed to [Codgic/codgic-api](https://github.com/Codgic/c
 
 # Priorities
 - Finish writing tests.
-- Find a better way to refresh jwt.
+- Introduce a logging system.
 - Fix known problems.
 
 # ETA?
