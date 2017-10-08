@@ -31,7 +31,7 @@ export async function validateUserCredential(data: string, retrievedPassword: st
     throw createError(403, 'Incorrect username or password.');
   }
 
-  if (!checkPrivilege(UserPrivilege.isEnabled, userCredentialInfo.user.privilege)) {
+  if (!await checkPrivilege(UserPrivilege.isEnabled, userCredentialInfo.user.privilege)) {
     throw createError(403, 'User is disabled.');
   }
 

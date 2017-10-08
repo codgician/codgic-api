@@ -66,11 +66,11 @@ export const enum UserPrivilege {
 }
 
 // Check privilege (bitwise).
-export async function checkPrivilege(operation: number, privilege: number) {
+export async function checkPrivilege(operation: number, privilege: number): Promise<boolean> {
   return (operation & privilege) === 0 ? false : true;
 }
 
-export async function getPrivilegeLevel(owner: User, group: Group | undefined, user: User | undefined) {
+export async function getPrivilegeLevel(owner: User, group: Group | undefined, user: User | undefined): Promise<number> {
 
   if (!owner) {
     throw createError(500, 'Invalid parameters.');
@@ -102,7 +102,7 @@ export async function checkContentPrivilege(
     groupPrivilege: number,
     worldPrivilege: number,
   },
-) {
+): Promise<boolean> {
 
   // Validate parameters.
   if (
