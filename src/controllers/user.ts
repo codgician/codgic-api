@@ -29,13 +29,37 @@ export async function getUserInfo(ctx: Context, next: () => Promise<any>) {
 
 export async function searchUser(ctx: Context, next: () => Promise<any>) {
 
+  // Validate request.
+  if (!ctx.query.q) {
+    throw createError('Query cannot be blank.');
+  }
+
+  if (ctx.query.sort && (ctx.query.sort !== 'id' || ctx.query.sort !== 'username' || ctx.query.sort !== 'createdAt')) {
+    ctx.query.sort = undefined;
+  }
+
+  if (ctx.query.direction && (ctx.query.direction !== 'ASC' || ctx.query.direction !== 'DESC')) {
+    ctx.query.direction = undefined;
+  }
+
+  let page = parseInt(ctx.query.page, 10);
+  let perPage = parseInt(ctx.query.perPage, 10);
+
+  if (page < 1) {
+    page = 1;
+  }
+  if (perPage < 1) {
+    perPage = 1;
+  }
+
+  // Retrieve search result.
   const userList = await UserModel
     .searchUser(
       ctx.query.q,
       ctx.query.sort,
       ctx.query.direction,
-      parseInt(ctx.query.page, 10),
-      parseInt(ctx.query.per_page, 10),
+      page,
+      perPage,
     );
 
   ctx.body = userList;

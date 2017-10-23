@@ -32,18 +32,18 @@ export async function getUserInfo(data: number | string, by: 'id' | 'username' |
 }
 
 export async function getUserList(
-  orderBy: 'id' | 'username' | 'createdAt' = 'id',
-  order: 'ASC' | 'DESC' = 'ASC',
+  sort: 'id' | 'username' | 'createdAt' = 'id',
+  direction: 'ASC' | 'DESC' = 'ASC',
   page: number = 1,
-  num: number = config.oj.default.page.user || 20,
+  perPage: number = config.oj.default.page.user || 20,
 ): Promise<User[]> {
 
   // Validate parameters.
-  if (page < 1 || num < 1) {
+  if (page < 1 || perPage < 1) {
     throw createError(500, 'Invalid parameters.');
   }
 
-  const firstResult = (page - 1) * num;
+  const firstResult = (page - 1) * perPage;
 
   const userList = await getRepository(User)
     .createQueryBuilder('user')
@@ -56,8 +56,8 @@ export async function getUserList(
       'user.privilege',
     ])
     .offset(firstResult)
-    .limit(num)
-    .orderBy(`user.${orderBy}`, order)
+    .limit(perPage)
+    .orderBy(`user.${sort}`, direction)
     .getMany()
     .catch((err) => {
       console.error(err);
@@ -74,18 +74,18 @@ export async function getUserList(
 
 export async function searchUser(
   keyword: string,
-  orderBy: 'id' | 'username' | 'createdAt' = 'id',
-  order: 'ASC' | 'DESC'  = 'ASC',
+  sort: 'id' | 'username' | 'createdAt' = 'id',
+  direction: 'ASC' | 'DESC'  = 'ASC',
   page: number = 1,
-  num: number = config.oj.default.page.user || 20,
+  perPage: number = config.oj.default.page.user || 20,
 ): Promise<User[]> {
 
   // Validate parameters.
-  if (page < 1 || num < 1 || !keyword) {
+  if (page < 1 || perPage < 1 || !keyword) {
     throw createError(500, 'Invalid parameters.');
   }
 
-  const firstResult = (page - 1) * num;
+  const firstResult = (page - 1) * perPage;
 
   const searchResult = await getRepository(User)
     .createQueryBuilder('user')
@@ -102,8 +102,8 @@ export async function searchUser(
     .orWhere('user.nickname LIKE :keyword')
     .setParameter('keyword', `%${keyword}%`)
     .offset(firstResult)
-    .limit(num)
-    .orderBy(`user.${orderBy}`, order)
+    .limit(perPage)
+    .orderBy(`user.${sort}`, direction)
     .getMany()
     .catch((err) => {
       console.error(err);
